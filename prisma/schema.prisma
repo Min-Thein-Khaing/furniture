@@ -1,0 +1,168 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Category {
+  id       Int       @id @default(autoincrement())
+  name     String    @unique @db.VarChar(52)
+  posts    Post[]
+  products Product[]
+}
+
+model Image {
+  id        Int     @id @default(autoincrement())
+  path      String  @db.VarChar(255)
+  productId Int
+  product   Product @relation(fields: [productId], references: [id])
+}
+
+model Order {
+  id         Int              @id @default(autoincrement())
+  code       String           @unique @db.VarChar(15)
+  userId     Int
+  totalPrice Decimal          @db.Decimal(10, 2)
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+  user       User             @relation(fields: [userId], references: [id])
+  products   ProductOnOrder[]
+}
+
+model Otp {
+  id            Int      @id @default(autoincrement())
+  phone         String   @unique @db.VarChar(15)
+  otp           String
+  rememberToken String
+  count         Int      @default(0) @db.SmallInt
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  error         Int      @default(0) @db.SmallInt
+  verifyToken   String?
+}
+
+model Post {
+  id         Int      @id @default(autoincrement())
+  title      String
+  content    String
+  body       String
+  image      String?
+  authorId   Int
+  categoryId Int
+  typeId     Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  user       User     @relation(fields: [authorId], references: [id])
+  category   Category @relation(fields: [categoryId], references: [id])
+  type       Type     @relation(fields: [typeId], references: [id])
+  tags       PostTag[]
+}
+
+model Product {
+  id          Int              @id @default(autoincrement())
+  name        String           @db.VarChar(255)
+  description String
+  price       Decimal          @db.Decimal(10, 2)
+  discount    Decimal          @default(0) @db.Decimal(10, 2)
+  rating      Int              @default(0) @db.SmallInt
+  inventory   Int              @default(0)
+  status      Status           @default(ACTIVE)
+  typeId      Int
+  categoryId  Int
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  images      Image[]
+  category    Category         @relation(fields: [categoryId], references: [id])
+  type        Type             @relation(fields: [typeId], references: [id])
+  products    ProductOnOrder[]
+  tags        ProductTag[]
+}
+
+model ProductOnOrder {
+  id        Int     @id @default(autoincrement())
+  orderId   Int
+  productId Int
+  quantity  Int     @default(1) @db.SmallInt
+  price     Decimal @db.Decimal(10, 2)
+  order     Order   @relation(fields: [orderId], references: [id])
+  product   Product @relation(fields: [productId], references: [id])
+}
+
+model PostTag{
+  id      Int     @id @default(autoincrement())
+  name    String @unique @db.VarChar(52)
+  posts   Post[]
+}
+model ProductTag{
+  id      Int     @id @default(autoincrement())
+  name    String @unique @db.VarChar(52)
+  products Product[]
+}
+
+// model Tag {
+//   id   Int        @id @default(autoincrement())
+//   name String     @db.VarChar(52)
+//   posts PostTag[]
+//   products ProductTag[]
+// }
+
+// model Taggable {
+//   id     Int    @id @default(autoincrement())
+//   tagId  Int
+//   typeId Int
+//   type   String @db.VarChar(7)
+//   tag    Tag    @relation(fields: [tagId], references: [id])
+// }
+
+model Type {
+  id       Int       @id @default(autoincrement())
+  name     String     @unique @db.VarChar(52)
+  posts    Post[]
+  products Product[]
+}
+
+model User {
+  id              Int       @id @default(autoincrement())
+  firstName       String    @db.VarChar(25)
+  lastName        String    @db.VarChar(25)
+  phone           String    @unique
+  password        String
+  email           String?   @unique @db.VarChar(55)
+  role            Role      @default(USER)
+  status          Status    @default(ACTIVE)
+  lastLogin       DateTime? @default(now())
+  errorLoginCount Int       @default(0) @db.SmallInt
+  randToken       String
+  image           String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  orders          Order[]
+  posts           Post[]
+}
+
+model Setting {
+  id    Int    @id @default(autoincrement())
+  key   String @unique @db.VarChar(52)
+  value String @db.VarChar(200)
+}
+
+enum Role {
+  USER
+  ADMIN
+  AUTHOR
+}
+
+enum Status {
+  ACTIVE
+  INACTIVE
+  FREEZED
+}

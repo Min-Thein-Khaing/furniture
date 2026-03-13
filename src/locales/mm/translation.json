@@ -1,0 +1,8 @@
+{
+  "welcome": "ပရိဘောဂဆိုင်မှ ကြိုဆိုပါ၏။",
+  "wrongPasswd": "လျှို့ဝှက်နံပါတ် မှားနေပါသည်။",
+  "changeLan": " {{ lang }} ဘာသာစကားကိုပြောင်းပြီးပါပြီ။",
+  "Incorrect password": "လျှို့ဝှက်နံပါတ် မှားနေပါသည်။",
+  "Maintenance Mode Activated":"အချက်အလက်ကို active ပြောင်းပြီးပါပြီ။",
+  "Maintenance Mode Deactivated":"အချက်အလက်ကို deactive ပြောင်းပြီးပါပြီ။"
+}

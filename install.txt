@@ -1,0 +1,28 @@
+
+//chat gpt 
+
+npm init -y
+npm i typescript ts-node @types/node nodemon --save-dev
+npx tsc --init
+npm i jest ts-jest supertest @types/jest @types/supertest --save-dev
+npm i express dotenv cors helmet morgan
+npm i bcrypt compression express-rate-limit express-validator jsonwebtoken multer
+npm i -D @types/bcrypt
+npm i @types/express @types/cors @types/morgan @types/compression @types/jsonwebtoken @types/multer --save-dev
+npm i crypto moment dayjs
+npm i cookie-parser
+npm i @types/cookie-parser
+
+
+//for localization
+npm install i18next i18next-http-middleware i18next-fs-backend
+
+//for cron-job
+npm i node-cron
+npm install --save-dev @types/node-cron
+
+//image optimize 
+npm i sharp
+
+//redis
+npm i ioredis bullmq
