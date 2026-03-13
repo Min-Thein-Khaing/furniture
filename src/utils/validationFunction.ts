@@ -20,4 +20,5 @@ export const validationFunction = (req:Request,res:Response,next:NextFunction) =
       errors: formattedErrors,
     });
   }
+  return false;
 }

@@ -58,8 +58,8 @@ export const ModelName = {
   Post: 'Post',
   Product: 'Product',
   ProductOnOrder: 'ProductOnOrder',
-  Tag: 'Tag',
-  Taggable: 'Taggable',
+  PostTag: 'PostTag',
+  ProductTag: 'ProductTag',
   Type: 'Type',
   User: 'User',
   Setting: 'Setting'
@@ -170,22 +170,20 @@ export const ProductOnOrderScalarFieldEnum = {
 export type ProductOnOrderScalarFieldEnum = (typeof ProductOnOrderScalarFieldEnum)[keyof typeof ProductOnOrderScalarFieldEnum]
 
 
-export const TagScalarFieldEnum = {
+export const PostTagScalarFieldEnum = {
   id: 'id',
   name: 'name'
 } as const
 
-export type TagScalarFieldEnum = (typeof TagScalarFieldEnum)[keyof typeof TagScalarFieldEnum]
+export type PostTagScalarFieldEnum = (typeof PostTagScalarFieldEnum)[keyof typeof PostTagScalarFieldEnum]
 
 
-export const TaggableScalarFieldEnum = {
+export const ProductTagScalarFieldEnum = {
   id: 'id',
-  tagId: 'tagId',
-  typeId: 'typeId',
-  type: 'type'
+  name: 'name'
 } as const
 
-export type TaggableScalarFieldEnum = (typeof TaggableScalarFieldEnum)[keyof typeof TaggableScalarFieldEnum]
+export type ProductTagScalarFieldEnum = (typeof ProductTagScalarFieldEnum)[keyof typeof ProductTagScalarFieldEnum]
 
 
 export const TypeScalarFieldEnum = {

@@ -6,6 +6,7 @@ import { checkFileExist } from "../../utils/check.js";
 import { checkUserNotExist } from "../../utils/userExist.js";
 import { ImageQueue } from "../../jobs/queues/imageQueue.js";
 import { createOnePost, PostPropsType } from "../../services/post.js";
+import fs from "fs";
 
 interface CustomRequest extends Request {
   userId?: number;
@@ -15,9 +16,16 @@ export const createPost = async (
   res: Response,
   next: NextFunction,
 ) => {
-  if (validationFunction(req, res, next)) return;
+  if (validationFunction(req, res, next)) {
+    if (req.file) {
+      fs.unlink(req.file.path, (err) => {
+        if (err) console.error("Error deleting file after validation failure:", err);
+      });
+    }
+    return;
+  }
   try {
-    const { title, content, body, categoryName, typeName, tags } = req.body;
+    let { title, content, body, categoryName, typeName, tags } = req.body;
     const userId = req.userId!;
     const user = await getNumberId(userId);
     const image = req.file;
@@ -47,18 +55,24 @@ const splitFilePath = req.file?.filename.split(".")[0];
       content,
       body,
       image: req.file!.filename,
-      authorId: userId,
+      authorId: user!.id,
       categoryName,
       typeName,
-      tags
+      tags: tags || []
     }
     const data = await createOnePost(postObject)
+    
     return res.status(200).json({
       message: "Create Post Successfully",
       data
     });
 
   } catch (error) {
+    if (req.file) {
+      fs.unlink(req.file.path, (err) => {
+        if (err) console.error("Error deleting file after execution failure:", err);
+      });
+    }
     next(error);
   }
 };

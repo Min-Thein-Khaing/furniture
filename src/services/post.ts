@@ -17,7 +17,7 @@ export const createOnePost = async (postData: PostPropsType) => {
     content: postData.content,
     body: postData.body,
     image: postData.image,
-    author: {
+    user: {
       connect: {
         id: postData.authorId,
       },

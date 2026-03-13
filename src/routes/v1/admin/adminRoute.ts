@@ -17,7 +17,19 @@ router.post(
 );
 
 
-router.post("/post",upload.single('image'),createPostValidator,createPost)
-router.patch("/post/:id",upload.single('image'),updatePostValidator,updatePost)
-router.delete("/post/:id",deletePost)
+router.post(
+  "/post",
+  upload.single('image'),
+  createPostValidator,
+  createPost
+);
+
+// Update Post
+router.patch(
+  "/post/:id",
+  upload.single('image'), // ၁။ အရင်ဖတ်
+  updatePostValidator,    // ၂။ ပြီးမှ စစ်
+  updatePost
+);
+router.delete("/post/:id", deletePost)
 export default router;

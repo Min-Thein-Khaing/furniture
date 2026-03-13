@@ -11,18 +11,17 @@ export const createPostValidator = [
     .trim()
     .notEmpty().withMessage("Content is required")
     .isLength({ min: 10 }).withMessage("Content must be at least 10 characters"),
-    // .escape() removed here if you use an HTML Editor on frontend
+  // .escape() removed here if you use an HTML Editor on frontend
 
   body("body")
     .trim()
     .notEmpty().withMessage("Body is required")
     .isLength({ min: 10 }).withMessage("Body must be at least 10 characters"),
-    // .escape() removed here if you use an HTML Editor on frontend
+  // .escape() removed here if you use an HTML Editor on frontend
 
   body("image")
-    .optional({ checkFalsy: true })
-    .isURL().withMessage("Image must be a valid URL"),
-
+    .optional({ checkFalsy: true }).isURL()
+    .withMessage("Image is required"),
   body("categoryName")
     .trim()
     .notEmpty().withMessage("Category name is required")
@@ -57,18 +56,15 @@ export const updatePostValidator = [
     .trim()
     .notEmpty().withMessage("Content cannot be empty if provided")
     .isLength({ min: 10 }).withMessage("Content must be at least 10 characters"),
-    // No .escape() if using HTML editor
+  // No .escape() if using HTML editor
 
   body("body")
     .optional()
     .trim()
     .notEmpty().withMessage("Body cannot be empty if provided")
     .isLength({ min: 10 }).withMessage("Body must be at least 10 characters"),
-    // No .escape() if using HTML editor
+  // No .escape() if using HTML editor
 
-  body("image")
-    .optional({ checkFalsy: true })
-    .isURL().withMessage("Image must be a valid URL"),
 
   body("categoryName")
     .optional()
@@ -81,7 +77,7 @@ export const updatePostValidator = [
     .trim()
     .notEmpty().withMessage("Type name cannot be empty if provided")
     .escape(),
-    
+
   body("tags")
     .optional({ checkFalsy: true })
     .customSanitizer(value => {

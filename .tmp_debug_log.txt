@@ -1,0 +1,99 @@
+
+> furniture-backend--2@1.0.0 dev
+> tsx watch src/index.ts
+
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+Server is running on port http://localhost:8080
+3:15:09 PM [tsx] change in ./src\controllers\admin\postController.ts Restarting...
+c🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+Server is running on port http://localhost:8080
+(node:21644) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these modes will adopt standard libpq semantics, which have weaker security guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode definitions.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Express Error Middleware caught: TypeError: Cannot read properties of undefined (reading 'filename')
+    at createPost (C:\Users\DELL\Desktop\furniture-backend -2\src\controllers\admin\postController.ts:49:24)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[0mPOST /api/v1/admin/post [31m500[0m 3093.215 ms - 66[0m
+3:18:22 PM [tsx] change in ./src\services\post.ts Restarting...
+c🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+Server is running on port http://localhost:8080
+(node:21160) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these modes will adopt standard libpq semantics, which have weaker security guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode definitions.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Express Error Middleware caught: TypeError: Cannot read properties of undefined (reading 'filename')
+    at createPost (C:\Users\DELL\Desktop\furniture-backend -2\src\controllers\admin\postController.ts:49:24)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[0mPOST /api/v1/admin/post [31m500[0m 4040.839 ms - 66[0m
+[0mPOST /api/v1/admin/post [32m200[0m 3642.720 ms - 293[0m
+[0mPOST /api/v1/admin/post [32m200[0m 2283.668 ms - 292[0m
+3:37:53 PM [tsx] change in ./src\controllers\admin\postController.ts Restarting...
+c🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+Server is running on port http://localhost:8080
+3:39:10 PM [tsx] change in ./src\routes\v1\admin\adminRoute.ts Restarting...
+c3:39:14 PM [tsx] change in ./src\routes\v1\admin\adminRoute.ts Restarting...
+c🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+Server is running on port http://localhost:8080
+(node:11500) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these modes will adopt standard libpq semantics, which have weaker security guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode definitions.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[0mPOST /api/v1/admin/post [33m422[0m 1298.366 ms - 226[0m
+[0mPOST /api/v1/admin/post [33m422[0m 608.685 ms - 226[0m
+[0mPOST /api/v1/admin/post [33m422[0m 624.863 ms - 226[0m
+3:45:14 PM [tsx] change in ./src\routes\v1\admin\adminRoute.ts Restarting...
+c🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+Server is running on port http://localhost:8080
+(node:13664) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these modes will adopt standard libpq semantics, which have weaker security guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode definitions.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[0mPOST /api/v1/admin/post [32m200[0m 3535.320 ms - 293[0m
+[0mPOST /api/v1/admin/post [33m422[0m 1247.011 ms - 89[0m
+[0mPOST /api/v1/admin/post [32m200[0m 1724.018 ms - 293[0m
+3:54:50 PM [tsx] change in ./src\app.ts Restarting...
+c3:54:52 PM [tsx] change in ./src\controllers\admin\postController.ts Restarting...
+c🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+Server is running on port http://localhost:8080
+3:55:48 PM [tsx] change in ./src\controllers\admin\postController.ts Restarting...
+c🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+Server is running on port http://localhost:8080
+3:58:43 PM [tsx] change in ./src\controllers\admin\postController.ts Restarting...
+c🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+Server is running on port http://localhost:8080
+3:59:28 PM [tsx] change in ./src\controllers\admin\postController.ts Restarting...
+c3:59:30 PM [tsx] change in ./src\controllers\admin\postController.ts Restarting...
+c🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+Server is running on port http://localhost:8080
+(node:9368) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these modes will adopt standard libpq semantics, which have weaker security guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode definitions.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[0mPOST /api/v1/admin/post [33m422[0m 1509.761 ms - 89[0m
+[0mPOST /api/v1/admin/post [32m200[0m 1672.252 ms - 293[0m

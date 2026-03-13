@@ -75,15 +75,15 @@ export type Product = Prisma.ProductModel
  */
 export type ProductOnOrder = Prisma.ProductOnOrderModel
 /**
- * Model Tag
+ * Model PostTag
  * 
  */
-export type Tag = Prisma.TagModel
+export type PostTag = Prisma.PostTagModel
 /**
- * Model Taggable
+ * Model ProductTag
  * 
  */
-export type Taggable = Prisma.TaggableModel
+export type ProductTag = Prisma.ProductTagModel
 /**
  * Model Type
  * 

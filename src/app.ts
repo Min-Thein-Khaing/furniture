@@ -39,8 +39,8 @@ const corsOptions: CorsOptions = {
   maxAge: 86400, // preflight OPTIONS request ကို ၂၄ နာရီ cache လုပ်ထား
   optionsSuccessStatus: 200, // legacy browsers (IE) အတွက်
 };
-app.use(express.static("public"));
-// app.use(express.static("uploads/images"));
+app.use("/images", express.static("uploads/images"));
+app.use("/optimize", express.static("uploads/optimize"));
 
 app.use(morgan("dev"));
 app.use(helmet());
@@ -108,6 +108,7 @@ app.use("/api/v1/admin", proxy, authorize(true, "ADMIN"), adminRoute);
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   const status = err.status || 500;
   const code = err.code || "INTERNAL_SERVER_ERROR";
+  console.error("Express Error Middleware caught:", err);
 
   const message = err.messageKey
     ? req.t(err.messageKey)
