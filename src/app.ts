@@ -1,4 +1,6 @@
-import express from "express";
+import fs from "fs";
+import { prisma } from "./lib/prisma.js"; // Just checking if I need it here, but I don't.
+import express from "express"
 import morgan from "morgan";
 import helmet from "helmet";
 import cors, { CorsOptions } from "cors";
@@ -105,16 +107,33 @@ app.use("/api/v1/admin", proxy, authorize(true, "ADMIN"), adminRoute);
 // └────────── Minute (0 - 59)
 
 //this is for localization showing middleware
+// app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+//   const status = err.status || 500;
+//   const code = err.code || "INTERNAL_SERVER_ERROR";
+     
+//    const message = err.messageKey
+//     ? req.t(err.messageKey)
+//     : req.t("internal_server_error");
+
+//   res.status(status).json({ message, code });
+// });
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+
+  console.error(err); // debug
+
   const status = err.status || 500;
   const code = err.code || "INTERNAL_SERVER_ERROR";
-  console.error("Express Error Middleware caught:", err);
 
-  const message = err.messageKey
-    ? req.t(err.messageKey)
-    : req.t("internal_server_error");
+  const message =
+    err.messageKey
+      ? req.t(err.messageKey)
+      : err.message || req.t("internal_server_error");
 
-  res.status(status).json({ message, code });
+  res.status(status).json({
+    message,
+    code,
+  });
+
 });
 // cron.schedule("* 1 * 3 0", async () => {
 //   console.log("running a task every minute");

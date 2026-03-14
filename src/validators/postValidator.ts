@@ -1,4 +1,5 @@
 import { body } from "express-validator";
+import sanitizeHtml from "sanitize-html";
 
 export const createPostValidator = [
   body("title")
@@ -10,18 +11,14 @@ export const createPostValidator = [
   body("content")
     .trim()
     .notEmpty().withMessage("Content is required")
-    .isLength({ min: 10 }).withMessage("Content must be at least 10 characters"),
-  // .escape() removed here if you use an HTML Editor on frontend
+    .isLength({ min: 10 }).withMessage("Content must be at least 10 characters")
+    .customSanitizer(value => sanitizeHtml(value)).notEmpty(),
 
   body("body")
     .trim()
     .notEmpty().withMessage("Body is required")
-    .isLength({ min: 10 }).withMessage("Body must be at least 10 characters"),
-  // .escape() removed here if you use an HTML Editor on frontend
-
-  body("image")
-    .optional({ checkFalsy: true }).isURL()
-    .withMessage("Image is required"),
+    .isLength({ min: 10 }).withMessage("Body must be at least 10 characters")
+    .customSanitizer(value => sanitizeHtml(value)).notEmpty(),
   body("categoryName")
     .trim()
     .notEmpty().withMessage("Category name is required")
@@ -55,28 +52,28 @@ export const updatePostValidator = [
     .optional()
     .trim()
     .notEmpty().withMessage("Content cannot be empty if provided")
-    .isLength({ min: 10 }).withMessage("Content must be at least 10 characters"),
-  // No .escape() if using HTML editor
+    .isLength({ min: 10 }).withMessage("Content must be at least 10 characters")
+    .customSanitizer(value => sanitizeHtml(value)).notEmpty(),
 
   body("body")
     .optional()
     .trim()
     .notEmpty().withMessage("Body cannot be empty if provided")
-    .isLength({ min: 10 }).withMessage("Body must be at least 10 characters"),
-  // No .escape() if using HTML editor
+    .isLength({ min: 10 }).withMessage("Body must be at least 10 characters")
+    .customSanitizer(value => sanitizeHtml(value)).notEmpty(),
 
 
   body("categoryName")
     .optional()
     .trim()
     .notEmpty().withMessage("Category name cannot be empty if provided")
-    .escape(),
+  ,
 
   body("typeName")
     .optional()
     .trim()
     .notEmpty().withMessage("Type name cannot be empty if provided")
-    .escape(),
+  ,
 
   body("tags")
     .optional({ checkFalsy: true })

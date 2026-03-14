@@ -26,3 +26,6 @@ npm i sharp
 
 //redis
 npm i ioredis bullmq
+//sanitize-html
+npm install sanitize-html
+npm i @types/sanitize-html
