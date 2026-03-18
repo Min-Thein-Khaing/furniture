@@ -15,12 +15,10 @@ export const ImageWorker = new Worker(
     );
 
     try {
-      console.log(`Optimization starting for job ${job.id}: ${filePath}`);
       await sharp(filePath)
         .resize(width, height)
         .webp({ quality })
         .toFile(optimizeImagePath);
-      console.log(`Optimization finished for job ${job.id}`);
     } catch (error) {
       console.error(`Error optimizing image ${fileName}:`, error);
       throw error; // Re-throw so BullMQ knows it failed

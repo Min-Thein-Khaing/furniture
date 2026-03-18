@@ -42,7 +42,7 @@ const corsOptions: CorsOptions = {
   optionsSuccessStatus: 200, // legacy browsers (IE) အတွက်
 };
 app.use("/images", express.static("uploads/images"));
-app.use("/optimize", express.static("uploads/optimize"));
+app.use("/uploads/optimize", express.static("uploads/optimize"));
 
 app.use(morgan("dev"));
 app.use(helmet());

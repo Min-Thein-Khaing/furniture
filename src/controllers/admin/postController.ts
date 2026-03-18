@@ -50,16 +50,6 @@ export const createPost = async (
 
     checkUserNotExist(user);
     checkFileExist(image);
-
-
-
-    console.log("--- MULTIPART UPLOAD DEBUG ---");
-    console.log("File Info:", {
-      filename: image?.filename,
-      size: image?.size,
-      path: image?.path
-    });
-
     if (image && image.size === 0) {
       console.error("CRITICAL: Uploaded file is 0 bytes!");
       await cleanupUpload(req);
@@ -180,11 +170,13 @@ export const deletePost = async (
 
     checkUserNotExist(user);
 
-    const oldPost = await getPost(postId);
+    const oldPost:any = await getPost(postId);
 
     if (!oldPost) {
       throw new ResponseError("Post not found",404,"post_not_found");
     }
+
+    await deletePostImages(oldPost.image);
 
     if (user!.id !== oldPost.authorId) {
       return res.status(403).json({

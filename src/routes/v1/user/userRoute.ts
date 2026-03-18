@@ -9,15 +9,16 @@ import {
 } from "../../../controllers/user/profileController.js";
 import { proxy } from "../../../middlewares/proxy.js";
 import upload, { uploadMemory } from "../../../middlewares/uploadFile.js";
-import { getPost, getPostByPagination } from "../../../controllers/user/postController.js";
+import { getPostOne, getPostByPagination, getPostInfinitePagination } from "../../../controllers/user/postController.js";
 
 
 const router = express.Router();
 
 router.post("/change-language", changeLanguageController);
 router.get("/test-permission", proxy, testPermission);
-router.get("/posts",proxy,getPostByPagination)
-router.get("/post/:id",proxy,getPost)
+router.get("/posts",proxy,getPostByPagination) //offset pagination
+router.get("/post/:id",proxy,getPostOne)
+router.get("/posts/infinite",proxy,getPostInfinitePagination)//infinite pagination
 
 router.patch("/profile/upload",proxy,upload.single('avatar'),uploadProfile)
 router.patch("/profile/upload/optimize",proxy,upload.single('avatar'),uploadProfileOptimize)

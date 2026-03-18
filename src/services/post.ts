@@ -55,46 +55,46 @@ export const createOnePost = async (postData: PostPropsType) => {
   return prisma.post.create({ data });
 };
 
-export const updateOnePost = async(id:number,postData:PostPropsType)=>{
+export const updateOnePost = async (id: number, postData: PostPropsType) => {
   const data: any = {
-    title: postData.title,
-    content: postData.content,
-    body: postData.body,
+    title: postData.title ,
+    content: postData.content ,
+    body: postData.body ,
     user: {
       connect: {
-        id: postData.authorId,
+        id: postData.authorId ,
       },
     },
     category: {
       connectOrCreate: {
         where: {
-          name: postData.categoryName,
+          name: postData.categoryName ,
         },
         create: {
-          name: postData.categoryName,
+          name: postData.categoryName ,  
         },
       },
     },
     type: {
       connectOrCreate: {
         where: {
-          name: postData.typeName,
+          name: postData.typeName ,
         },
         create: {
-          name: postData.typeName,
+          name: postData.typeName ,
         },
       },
     },
   };
-  if(postData.image){
-    data.image = postData.image;
+  if (postData.image) {
+    data.image = postData.image 
   }
 
   if (postData.tags && postData.tags.length > 0) {
     data.tags = {
       connectOrCreate: postData.tags.map((tag) => ({
         where: { name: tag },
-        create: { name: tag },
+        create: { name: tag  },
       })),
     };
   }
@@ -110,7 +110,7 @@ export const updateOnePost = async(id:number,postData:PostPropsType)=>{
       type: true,
     },
   });
-}
+};
 
 export const getPost = async (id: number) => {
   const post = await prisma.post.findUnique({
@@ -126,18 +126,75 @@ export const getPost = async (id: number) => {
   return post;
 };
 export const postDelete = async (id: number) => {
-
   const post = await prisma.post.findUnique({
-    where: { id }
+    where: { id },
   });
 
   if (!post) {
-    throw new ResponseError("Post not found",404,"post_not_found");
+    throw new ResponseError("Post not found", 404, "post_not_found");
   }
 
   const deletedPost = await prisma.post.delete({
-    where: { id }
+    where: { id },
   });
 
   return deletedPost;
+};
+
+export const postWithRelation = async (id: number) => {
+  const post = await prisma.post.findUnique({
+    where: {
+      id: id,
+    },
+    select: {
+      id: true,
+      title: true,
+      content: true,
+      body: true,
+      image: true,
+      updatedAt: true,
+      category: {
+        select: {
+          name: true,
+        },
+      },
+      user: {
+        select: {
+          firstName: true,
+          lastName: true,
+        },
+      },
+      type: {
+        select: {
+          name: true,
+        },
+      },
+      tags: {
+        select: {
+          name: true,
+        },
+      },
+    },
+  });
+  const customizePost = {
+    ...post,
+
+    image: post!.image
+      ? `http://localhost:${process.env.PORT}/uploads/optimize/${post!.image.replace(/\.[^/.]+$/, "")}.webp`
+      : null,
+    // updatedAt: post!.updatedAt.toISOString(),
+    updatedAt: post!.updatedAt.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    }),
+    user: post!.user
+      ? {
+      firstName: post!.user.firstName,
+      lastName: post!.user.lastName,
+      fullName: `${post!.user.firstName} ${post!.user.lastName}`,
+    }
+      : null,
+  };
+  return customizePost;
 };
