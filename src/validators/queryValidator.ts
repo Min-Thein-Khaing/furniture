@@ -8,3 +8,14 @@ export const changeLanguage = [
     .isIn(["mm", "en"])
     .withMessage("Invalid language"),
 ];
+
+export const pagination = [
+  query("page","Page must be an integer")
+    .isInt({gt:0})
+    .withMessage("Page must be an integer")
+    .optional(), 
+  query("limit","Limit must be an integer")
+    .isInt({gt:0})
+    .withMessage("Limit must be an integer")
+    .optional(),
+];

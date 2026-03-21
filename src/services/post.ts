@@ -1,3 +1,4 @@
+import { options } from "sanitize-html";
 import { prisma } from "../lib/prisma.js";
 import { ResponseError } from "../utils/responseError.js";
 
@@ -198,3 +199,11 @@ export const postWithRelation = async (id: number) => {
   };
   return customizePost;
 };
+
+
+export const getPostsByPaginationWithOffset = async(options:any) => {
+  const posts = await prisma.post.findMany({
+    ...options
+  });
+  return posts
+}

@@ -10,13 +10,14 @@ import {
 import { proxy } from "../../../middlewares/proxy.js";
 import upload, { uploadMemory } from "../../../middlewares/uploadFile.js";
 import { getPostOne, getPostByPagination, getPostInfinitePagination } from "../../../controllers/user/postController.js";
+import { pagination } from "../../../validators/queryValidator.js";
 
 
 const router = express.Router();
 
 router.post("/change-language", changeLanguageController);
 router.get("/test-permission", proxy, testPermission);
-router.get("/posts",proxy,getPostByPagination) //offset pagination
+router.get("/posts",proxy,pagination,getPostByPagination) //offset pagination
 router.get("/post/:id",proxy,getPostOne)
 router.get("/posts/infinite",proxy,getPostInfinitePagination)//infinite pagination
 
