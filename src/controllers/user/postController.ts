@@ -10,6 +10,7 @@ import {
 import { query } from "express-validator";
 import { validationFunction } from "../../utils/validationFunction.js";
 import { prisma } from "../../lib/prisma.js";
+import { getOrSetCache } from "../../utils/cache.js";
 
 interface CustomerRequest extends Request {
   userId?: number;
@@ -27,7 +28,11 @@ export const getPostOne = async (
 
     checkUserNotExist(user);
 
-    const oldPost = await postWithRelation(postId);
+    // const oldPost = await postWithRelation(postId);
+    const cacheKey = `posts:${JSON.stringify(postId)}`;
+    const oldPost = await getOrSetCache(cacheKey, async () => {
+      return await postWithRelation(postId);
+    });
 
     if (!oldPost) {
       throw new ResponseError("Post not found", 404, "post_not_found");
@@ -55,7 +60,7 @@ export const getPostByPagination = async (
 ) => {
   try {
     if (validationFunction(req, res, next)) return;
- const userId = req.userId!;
+    const userId = req.userId!;
     const user = await getNumberId(Number(userId));
 
     checkUserNotExist(user);
@@ -63,11 +68,11 @@ export const getPostByPagination = async (
     const limit = Math.max(1, Number(req.query.limit) || 5);
     const skip = (page - 1) * limit;
 
-    const totalPosts = await prisma.post.count(); 
+    const totalPosts = await prisma.post.count();
 
     const option = {
       skip,
-      take: limit, 
+      take: limit,
       select: {
         id: true,
         title: true,
@@ -81,22 +86,26 @@ export const getPostByPagination = async (
         category: true,
         type: true,
       },
-      orderBy: { id: "desc" }
+      orderBy: { id: "desc" },
     };
 
-    const posts = await getPostsByPaginationWithOffset(option);
+    const cacheKey = `posts:${JSON.stringify(req.query)}`;
+    const posts = await getOrSetCache(cacheKey, async () => {
+      return await getPostsByPaginationWithOffset(option);
+    });
 
-   
     const formattedData = posts.map((post: any) => ({
       ...post,
-      user: post.user ? {
-        ...post.user,
-        fullName: `${post.user.firstName} ${post.user.lastName}`
-      } : null
+      user: post.user
+        ? {
+            ...post.user,
+            fullName: `${post.user.firstName} ${post.user.lastName}`,
+          }
+        : null,
     }));
 
     const lastPage = Math.ceil(totalPosts / limit);
-    const baseUrl = `${req.protocol}://${req.get('host')}${req.baseUrl}${req.path}`;
+    const baseUrl = `${req.protocol}://${req.get("host")}${req.baseUrl}${req.path}`;
 
     return res.status(200).json({
       data: formattedData,
@@ -104,7 +113,8 @@ export const getPostByPagination = async (
         first: `${baseUrl}?page=1&limit=${limit}&`,
         last: `${baseUrl}?page=${lastPage}&limit=${limit}`,
         prev: page > 1 ? `${baseUrl}?page=${page - 1}&limit=${limit}` : null,
-        next: page < lastPage ? `${baseUrl}?page=${page + 1}&limit=${limit}` : null,
+        next:
+          page < lastPage ? `${baseUrl}?page=${page + 1}&limit=${limit}` : null,
       },
       meta: {
         current_page: page,
@@ -114,9 +124,8 @@ export const getPostByPagination = async (
         per_page: limit,
         to: skip + posts.length,
         total: totalPosts,
-      }
+      },
     });
-
   } catch (error) {
     next(error);
   }
@@ -167,8 +176,8 @@ export const getPostByPagination = async (
 //       title: post.title,
 //       content: post.content,
 //       // Image path optimization
-//       image: post.image 
-//         ? `${process.env.APP_URL}/uploads/optimize/${post.image.split('.')[0]}.webp` 
+//       image: post.image
+//         ? `${process.env.APP_URL}/uploads/optimize/${post.image.split('.')[0]}.webp`
 //         : null,
 //       updatedAt: post.updatedAt.toLocaleDateString("en-US", {
 //         year: "numeric",
@@ -208,28 +217,40 @@ export const getPostByPagination = async (
 
 //   } catch (error) {
 //     // 6. Global Error Handling
-//     next(error); 
+//     next(error);
 //   }
 // };
 
-export const getPostInfinitePagination = [ query("cursor").isInt({gt:0}).withMessage("Cursor must be an integer").optional(),query("limit").isInt({gt:4}).withMessage("Limit must be an integer").optional(),async (
-  req: CustomerRequest,
-  res: Response,
-  next: NextFunction,
-) => {
-  if(validationFunction(req, res, next)) return;
-   const userId = req.userId!;
+export const getPostInfinitePagination = [
+  query("cursor")
+    .isInt({ gt: 0 })
+    .withMessage("Cursor must be an integer")
+    .optional(),
+
+  query("limit")
+    .isInt({ gt: 4 })
+    .withMessage("Limit must be an integer")
+    .optional(),
+
+  async (req: CustomerRequest, res: Response, next: NextFunction) => {
+    // ✅ validation
+    if (validationFunction(req, res, next)) return;
+
+    const userId = req.userId!;
     const user = await getNumberId(Number(userId));
-
     checkUserNotExist(user);
-  const lastCursor =Number(req.query.cursor);
-  const limit = req.query.limit ? Number(req.query.limit) : 5;
 
-  const option = {
-    take: limit + 1,
-    skip : lastCursor ? 1 : 0,
-    cursor: lastCursor ? { id: lastCursor } : undefined,
-    select: {
+    // ✅ query params
+    const lastCursor = req.query.cursor ? Number(req.query.cursor) : undefined;
+
+    const limit = req.query.limit ? Number(req.query.limit) : 5;
+
+    // ✅ prisma option
+    const option = {
+      take: limit + 1,
+      skip: lastCursor ? 1 : 0,
+      cursor: lastCursor ? { id: lastCursor } : undefined,
+      select: {
         id: true,
         title: true,
         content: true,
@@ -242,27 +263,44 @@ export const getPostInfinitePagination = [ query("cursor").isInt({gt:0}).withMes
         category: true,
         type: true,
       },
-      orderBy: { id: "asc" }
-  }
-  const posts = await getPostsByPaginationWithOffset(option);
+      orderBy: { id: "asc" },
+    };
 
-  const formattedData = posts.map((post: any) => ({
-    ...post,
-    image: post.image ? `${process.env.APP_URL}/uploads/optimize/${post.image.split('.')[0]}.webp` : null,
-    user: post.user ? {
-      fullName: `${post.user.firstName} ${post.user.lastName}`,
-    } : null,
-  }))
+    // const posts = await getPostsByPaginationWithOffset(option);
+    const cacheKey = `posts:${JSON.stringify(req.query)}`;
+    const posts = await getOrSetCache(cacheKey, async () => {
+      return await getPostsByPaginationWithOffset(option);
+    });
 
-  const nextCursor = posts.length > limit ;
-  if(nextCursor){
-    posts.pop();
-  }
-const newCursor = posts.length > 0 ? posts[posts.length - 1].id : null;
- 
-  return res.status(200).json({
-    data: formattedData,
-    nextCursor,
-    newCursor
-  });
-}];
+    // ✅ check next page
+    const hasNextPage = posts.length > limit;
+    if (hasNextPage) {
+      posts.pop(); // remove extra item
+    }
+
+    // ✅ format AFTER pop (important)
+    const formattedData = posts.map((post: any) => ({
+      ...post,
+      image: post.image
+        ? `http://localhost:${process.env.APP_URL}/uploads/optimize/${
+            post.image.split(".")[0]
+          }.webp`
+        : null,
+      user: post.user
+        ? {
+            fullName: `${post.user.firstName} ${post.user.lastName}`,
+          }
+        : null,
+    }));
+
+    // ✅ next cursor (id)
+    const nextCursor =
+      hasNextPage && posts.length > 0 ? posts[posts.length - 1].id : null;
+
+    return res.status(200).json({
+      data: formattedData,
+      hasNextPage,
+      nextCursor,
+    });
+  },
+];

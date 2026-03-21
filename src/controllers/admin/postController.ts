@@ -18,6 +18,7 @@ import {
   optimizeImage,
 } from "../../utils/fileHelper.js";
 import { ResponseError } from "../../utils/responseError.js";
+import { CacheQueue } from "../../jobs/queues/cacheQueue.js";
 
 
 interface CustomRequest extends Request {
@@ -74,6 +75,9 @@ export const createPost = async (
     };
 
     const data = await createOnePost(postObject);
+    await CacheQueue.add("invalidate-post-cache",{
+      pattern : `posts:*`,
+    });
 
     return res.status(200).json({
       message: "Create Post Successfully",
@@ -109,6 +113,9 @@ export const updatePost = async (
     checkUserNotExist(user);
 
     const oldPost: any = await getPost(+postId);
+    await CacheQueue.add("invalidate-post-cache",{
+      pattern : `posts:*`,
+    });
     if(user!.id !== oldPost!.authorId){
       await cleanupUpload(req);
       return res.status(403).json({
@@ -185,6 +192,9 @@ export const deletePost = async (
     }
 
     await postDelete(postId);
+    await CacheQueue.add("invalidate-post-cache",{
+      pattern : `posts:*`,
+    });
 
     return res.status(200).json({
       message: "Delete Post Successfully",
