@@ -1,4 +1,6 @@
 import { prisma } from "../lib/prisma.js";
+import { deletePostImages } from "../utils/filesHelper.js";
+import { ResponseError } from "../utils/responseError.js";
 export interface ProductPropsType {
   name: string;
   description: string;
@@ -78,6 +80,113 @@ export const createProducts = async (productData: ProductPropsType) => {
       tags: true,
       category: true,
       type: true,
+    },
+  });
+};
+
+export const updateProducts = async (id:number,productData: ProductPropsType) => {
+  const product = await prisma.product.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      images: true,
+    },
+  });
+  if (!product) {
+    throw new ResponseError("Product not found", 404, "product_not_found");
+  }
+  // Only delete old physical images if new images are being uploaded
+  if (productData.images && productData.images.length > 0) {
+    if (product.images && product.images.length > 0) {
+      const imageNames = product.images.map((image) => image.path);
+      await deletePostImages(imageNames);
+    }
+  }
+  const data: any = {
+    name: productData.name,
+    description: productData.description,
+    price: productData.price,
+    discount: productData.discount,
+    rating: productData.rating,
+    inventory: productData.inventory,
+    status: productData.status,
+    user: {
+      connect: {
+        id: productData.authorId,
+      },
+    },
+    type: {
+      connectOrCreate: {
+       where: {
+         name: productData.typeName,
+       },
+       create:{
+         name: productData.typeName
+       }
+      },
+    },
+    category:{
+      connectOrCreate: {
+        where: {
+          name: productData.categoryName,
+        },
+        create:{
+          name: productData.categoryName
+        }
+      },
+    }
+  };
+  if (productData.images && productData.images.length > 0) {
+    data.images = {
+      deleteMany: {},
+      create: productData.images.map((image) => ({
+        path: image,
+      })),
+    };
+  }
+  if (productData.tags && productData.tags.length > 0) {
+    data.tags = {
+      set: [],
+      connectOrCreate: productData.tags.map((tag) => ({
+        where: { name: tag },
+        create: { name: tag },
+      })),
+    };
+  }
+  return await prisma.product.update({
+    where: {
+      id,
+    },
+    data,
+    include: {
+      images: true,
+      tags: true,
+      category: true,
+      type: true,
+    },
+  });
+};
+
+export const deleteProducts = async (id: number) => {
+  const product = await prisma.product.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      images: true,
+    },
+  });
+  if (!product) {
+    throw new ResponseError("Product not found", 404, "product_not_found");
+  }
+  if (product.images && product.images.length > 0) {
+    const imageNames = product.images.map((image) => image.path);
+    await deletePostImages(imageNames);
+  }
+  return await prisma.product.delete({
+    where: {
+      id,
     },
   });
 };

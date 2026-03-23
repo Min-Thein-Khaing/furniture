@@ -6,7 +6,7 @@ import { maintenanceValidator } from "../../../validators/registerValidator.js";
 import upload from "../../../middlewares/uploadFile.js";
 import { createPost, deletePost, updatePost } from "../../../controllers/admin/postController.js";
 import { createPostValidator, updatePostValidator } from "../../../validators/postValidator.js";
-import { createProduct, updateProduct } from "../../../controllers/admin/productController.js";
+import { createProduct, deleteProduct, updateProduct } from "../../../controllers/admin/productController.js";
 import { createProductValidator,updateProductValidator } from "../../../validators/productValidator.js";
 
 const router = express.Router();
@@ -50,6 +50,8 @@ router.patch(
   updateProductValidator,    
   updateProduct
 );
+//delete product
+router.delete("/product/:id", deleteProduct);
 
 
 export default router;

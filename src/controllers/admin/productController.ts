@@ -2,7 +2,7 @@ import { Request, NextFunction, Response } from "express";
 import { deleteFile, optimizeImages } from "../../utils/filesHelper.js";
 import { validationFunction } from "../../utils/validationFunction.js";
 import { ResponseError } from "../../utils/responseError.js";
-import { createProducts, ProductPropsType } from "../../services/product.js";
+import { createProducts, deleteProducts, ProductPropsType, updateProducts } from "../../services/product.js";
 import { Product } from "../../generated/prisma/client.js";
 import { CacheQueue } from "../../jobs/queues/cacheQueue.js";
 
@@ -87,7 +87,6 @@ export const createProduct = async (
 
     // ၅။ အောင်မြင်ကြောင်း Response ပြန်ခြင်း
     return res.status(201).json({
-      success: true,
       message: "Product created successfully",
       data,
     });
@@ -102,9 +101,64 @@ export const updateProduct = async (
   req: CustomRequest,
   res: Response,
   next: NextFunction,
-) => {};
+) => {
+  if (validationFunction(req, res, next)) {
+    await cleanupUpload(req);
+    return;
+  }
+  try {
+    const { id } = req.params;
+    const { name, description, price, discount, rating, inventory, status, categoryName, typeName, tags } = req.body;
+    const files = req.files as Express.Multer.File[] | undefined;
+    const user = req.user;
+    if (files && files.length > 0) {
+      await optimizeImages(files);
+    }
+    const productObject: ProductPropsType = {
+      name,
+      description,
+      price: Number(price),
+      discount: Number(discount || 0),
+      rating: Number(rating || 0),
+      inventory: Number(inventory),
+      status,
+      categoryName,
+      typeName,
+      tags: tags || [],
+      images: files && files.length > 0 ? files.map((file) => file.filename) : [],
+      authorId: user.id,
+    };
+    const data = await updateProducts(Number(id), productObject);
+    await CacheQueue.add("invalidate-product-cache", {
+      pattern: `products:*`,
+    });
+    return res.status(200).json({
+      message: "Product updated successfully",
+      data,
+    });
+  } catch (error) {
+    await cleanupUpload(req);
+    next(error);
+  }
+};
 export const deleteProduct = async (
   req: CustomRequest,
   res: Response,
   next: NextFunction,
-) => {};
+) => {
+  if (validationFunction(req, res, next)) {
+    return;
+  }
+  try {
+    const { id } = req.params;
+    await deleteProducts(Number(id));
+    await CacheQueue.add("invalidate-product-cache", {
+      pattern: `products:*`,
+    });
+    return res.status(200).json({
+      message: "Product deleted successfully",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
