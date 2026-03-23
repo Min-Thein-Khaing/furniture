@@ -1,6 +1,7 @@
 import { options } from "sanitize-html";
 import { prisma } from "../lib/prisma.js";
 import { ResponseError } from "../utils/responseError.js";
+import { deletePostImages } from "../utils/fileHelper.js";
 
 export type PostPropsType = {
   title: string;
@@ -55,10 +56,22 @@ export const createOnePost = async (postData: PostPropsType) => {
   }
   return prisma.post.create({ data : data,include:{
     user: true,
+    tags: true,
+    category: true,
+    type: true,
   }});
 };
 
 export const updateOnePost = async (id: number, postData: PostPropsType) => {
+  const post:any = await prisma.post.findUnique({
+    where: {
+      id: id,
+    },
+  });
+  if (!post) {
+    await deletePostImages(post.image)
+    throw new ResponseError("Post not found", 404, "post_not_found");
+  }
   const data: any = {
     title: postData.title ,
     content: postData.content ,

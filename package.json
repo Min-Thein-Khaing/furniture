@@ -66,5 +66,9 @@
     "pg": "^8.18.0",
     "sanitize-html": "^2.17.1",
     "sharp": "^0.34.5"
+  },
+  "prisma": {
+    "seed": "tsx src/seeders/seed.ts"
   }
 }
+

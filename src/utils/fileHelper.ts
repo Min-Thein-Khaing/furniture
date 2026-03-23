@@ -36,6 +36,46 @@ export const deletePostImages = async (imageName: string) => {
   await deleteFile(optimizePath);
 };
 
+export const clearDirectory = async (directoryPath: string) => {
+  if (!fs.existsSync(directoryPath)) return;
+
+  try {
+    const files = await fs.promises.readdir(directoryPath);
+    for (const file of files) {
+      if (file === ".gitkeep") continue;
+      const filePath = path.join(directoryPath, file);
+      try {
+        const stats = await fs.promises.stat(filePath);
+        if (stats.isFile()) {
+          await fs.promises.unlink(filePath);
+        } else {
+          await fs.promises.rm(filePath, { recursive: true, force: true });
+        }
+      } catch (fileError: any) {
+        if (fileError.code === "EBUSY") {
+          console.warn(
+            `Skipping busy file: ${file}. Please close any app using it.`,
+          );
+        } else {
+          console.error(`Failed to delete ${file}:`, fileError.message);
+        }
+      }
+    }
+  } catch (error) {
+    console.error(`Error clearing directory ${directoryPath}:`, error);
+  }
+};
+
+
+export const clearUploads = async () => {
+  const imagesPath = path.join(process.cwd(), "uploads", "images");
+  const optimizePath = path.join(process.cwd(), "uploads", "optimize");
+
+  await clearDirectory(imagesPath);
+  await clearDirectory(optimizePath);
+};
+
+
 export const optimizeImage = async (file: Express.Multer.File) => {
   const splitFilePath = file.filename.split(".")[0];
 

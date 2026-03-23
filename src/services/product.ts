@@ -85,7 +85,7 @@ export const createProducts = async (productData: ProductPropsType) => {
 };
 
 export const updateProducts = async (id:number,productData: ProductPropsType) => {
-  const product = await prisma.product.findUnique({
+  const product= await prisma.product.findUnique({
     where: {
       id,
     },
@@ -178,6 +178,7 @@ export const deleteProducts = async (id: number) => {
     },
   });
   if (!product) {
+   
     throw new ResponseError("Product not found", 404, "product_not_found");
   }
   if (product.images && product.images.length > 0) {

@@ -1,31 +1,16 @@
-import { Prisma } from "../generated/prisma/client.js";
 import { prisma } from "../lib/prisma.js";
-import bcrypt from "bcrypt";
-
-const userData: Prisma.UserCreateInput[] = [
-  {
-    firstName: "Miguel",
-    lastName: "Garcia",
-    phone: "1234567890",
-    password: "",
-    randToken: "",
-  },
-];
+import { clearUploads } from "../utils/fileHelper.js";
 
 async function main() {
-  for (const u of userData) {
-    const salt = await bcrypt.genSalt(10);
-    const hashPassword = await bcrypt.hash(u.password, salt);
-    await prisma.user.createMany({
-      data: [
-        {
-          ...u,
-          password: hashPassword,
-        },
-      ],
-    });
-  }
+  console.log("Cleaning uploads directory...");
+  await clearUploads();
+  console.log("Uploads directory cleaned.");
+  
+  // Add your seeding logic here if needed
+  // Example:
+  // await prisma.user.create({ ... })
 }
+
 main()
   .then(async () => {
     await prisma.$disconnect();
@@ -35,3 +20,4 @@ main()
     await prisma.$disconnect();
     process.exit(1);
   });
+

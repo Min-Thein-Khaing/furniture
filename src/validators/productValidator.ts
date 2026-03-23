@@ -65,6 +65,7 @@ export const createProductValidator = [
 
 export const updateProductValidator = [
   body("name")
+    .optional()
     .notEmpty()
     .withMessage("Product name is required")
     .isString()
@@ -74,12 +75,14 @@ export const updateProductValidator = [
     .trim(),
 
   body("description")
+    .optional()
     .notEmpty()
     .withMessage("Description is required")
     .isString()
     .withMessage("Description must be a string"),
 
   body("price")
+  .optional()
     .notEmpty()
     .withMessage("Price is required")
     // Decimal (10, 2) အတွက် စစ်ဆေးခြင်း
@@ -97,6 +100,7 @@ export const updateProductValidator = [
     .withMessage("Rating must be between 0 and 5"),
 
   body("inventory")
+  .optional()
     .notEmpty()
     .withMessage("Inventory is required")
     .isInt({ min: 0 })
@@ -107,9 +111,9 @@ export const updateProductValidator = [
     .isIn(["ACTIVE", "INACTIVE", "ARCHIVED"])
     .withMessage("Invalid status"),
 
-  body("typeName").notEmpty().withMessage("Type Name is required"),
+  body("typeName").optional().notEmpty().withMessage("Type Name is required"),
 
-  body("categoryName").notEmpty().withMessage("Category Name is required"),
+  body("categoryName").optional().notEmpty().withMessage("Category Name is required"),
   body("images")
     .optional({ checkFalsy: true })
     .isArray()

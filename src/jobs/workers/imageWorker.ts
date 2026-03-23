@@ -2,6 +2,8 @@ import { Worker } from "bullmq";
 import "dotenv/config";
 import path from "path";
 import sharp, { concurrency } from "sharp";
+sharp.cache(false);
+
 
 export const ImageWorker = new Worker(
   "imageQueue",
