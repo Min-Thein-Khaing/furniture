@@ -23,6 +23,7 @@ import { CacheQueue } from "../../jobs/queues/cacheQueue.js";
 
 interface CustomRequest extends Request {
   userId?: number;
+  user?:any;
 }
 
 const cleanupUpload = async (req: CustomRequest) => {
@@ -44,12 +45,13 @@ export const createPost = async (
   try {
     const { title, content, body, categoryName, typeName, tags } = req.body;
 
-    const userId = req.userId!;
-    const user = await getNumberId(userId);
+    // const userId = req.userId!;
+    // const user = await getNumberId(userId);
 
     const image = req.file;
+    const user = req.user;
 
-    checkUserNotExist(user);
+    // checkUserNotExist(user);
     checkFileExist(image);
     if (image && image.size === 0) {
       console.error("CRITICAL: Uploaded file is 0 bytes!");
@@ -104,13 +106,14 @@ export const updatePost = async (
       req.body;
     const { id } = req.params;
     const postId = Number(id);
+    const user = req.user;
 
-    const userId = req.userId!;
-    const user = await getNumberId(userId);
+    // const userId = req.userId!;
+    // const user = await getNumberId(userId);
     
     const newImage = req.file;
 
-    checkUserNotExist(user);
+    // checkUserNotExist(user);
 
     const oldPost: any = await getPost(+postId);
     await CacheQueue.add("invalidate-post-cache",{
@@ -171,11 +174,11 @@ export const deletePost = async (
   try {
 
     const postId = Number(req.params.id);
+    const user = req.user
+    // const userId = req.userId!;
+    // const user = await getNumberId(userId);
 
-    const userId = req.userId!;
-    const user = await getNumberId(userId);
-
-    checkUserNotExist(user);
+    // checkUserNotExist(user);
 
     const oldPost:any = await getPost(postId);
 

@@ -1,4 +1,4 @@
-import { tryCatch, Worker } from "bullmq";
+import {  Worker } from "bullmq";
 import { redis } from "../../utils/cache.js";
 export const CacheWorker = new Worker(
   "cache-invalidation",

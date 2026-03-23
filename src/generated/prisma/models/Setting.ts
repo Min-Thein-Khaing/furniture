@@ -939,6 +939,11 @@ export type SettingFindManyArgs<ExtArgs extends runtime.Types.Extensions.Interna
    * Skip the first `n` Settings.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of Settings.
+   */
   distinct?: Prisma.SettingScalarFieldEnum | Prisma.SettingScalarFieldEnum[]
 }
 

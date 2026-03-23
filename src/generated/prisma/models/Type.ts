@@ -1107,6 +1107,11 @@ export type TypeFindManyArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
    * Skip the first `n` Types.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of Types.
+   */
   distinct?: Prisma.TypeScalarFieldEnum | Prisma.TypeScalarFieldEnum[]
 }
 

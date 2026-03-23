@@ -53,7 +53,9 @@ export const createOnePost = async (postData: PostPropsType) => {
       })),
     };
   }
-  return prisma.post.create({ data });
+  return prisma.post.create({ data : data,include:{
+    user: true,
+  }});
 };
 
 export const updateOnePost = async (id: number, postData: PostPropsType) => {
@@ -61,11 +63,7 @@ export const updateOnePost = async (id: number, postData: PostPropsType) => {
     title: postData.title ,
     content: postData.content ,
     body: postData.body ,
-    user: {
-      connect: {
-        id: postData.authorId ,
-      },
-    },
+
     category: {
       connectOrCreate: {
         where: {
@@ -93,6 +91,7 @@ export const updateOnePost = async (id: number, postData: PostPropsType) => {
 
   if (postData.tags && postData.tags.length > 0) {
     data.tags = {
+      set: [],
       connectOrCreate: postData.tags.map((tag) => ({
         where: { name: tag },
         create: { name: tag  },
