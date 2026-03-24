@@ -11,6 +11,7 @@ import { proxy } from "../../../middlewares/proxy.js";
 import upload, { uploadMemory } from "../../../middlewares/uploadFile.js";
 import { getPostOne, getPostByPagination, getPostInfinitePagination } from "../../../controllers/user/postController.js";
 import { pagination } from "../../../validators/queryValidator.js";
+import { getOneProduct } from "../../../controllers/user/productController.js";
 
 
 const router = express.Router();
@@ -20,6 +21,8 @@ router.get("/test-permission", proxy, testPermission);
 router.get("/posts",proxy,pagination,getPostByPagination) //offset pagination
 router.get("/post/:id",proxy,getPostOne)
 router.get("/posts/infinite",proxy,getPostInfinitePagination)//infinite pagination
+
+router.get("/product/:id",proxy,getOneProduct)
 
 router.patch("/profile/upload",proxy,upload.single('avatar'),uploadProfile)
 router.patch("/profile/upload/optimize",proxy,upload.single('avatar'),uploadProfileOptimize)

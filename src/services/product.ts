@@ -191,3 +191,47 @@ export const deleteProducts = async (id: number) => {
     },
   });
 };
+
+
+export const getProductWithRelation = async (id: number) => {
+  const product = await prisma.product.findUnique({
+    where: {
+      id: id,
+    },
+    select: {
+      id: true,
+      name: true,
+      description: true,
+      price: true,
+      rating: true,
+      inventory: true,
+      images: {
+        select: {
+          path: true,
+        },
+      },
+      user: {
+        select: {
+          firstName: true,
+          lastName: true,
+        },
+      },
+    },
+  });
+
+  if (!product) return null;
+
+  return {
+    ...product,
+    images: product.images.map((img) => ({
+      path: `http://localhost:${process.env.PORT}/uploads/optimize/${img.path.replace(/\.[^/.]+$/, "")}.webp`,
+    })),
+    user: product.user
+      ? {
+          firstName: product.user.firstName,
+          lastName: product.user.lastName,
+          fullName: `${product.user.firstName} ${product.user.lastName}`,
+        }
+      : null,
+  };
+};
