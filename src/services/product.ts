@@ -2,6 +2,7 @@ import { prisma } from "../lib/prisma.js";
 import { deletePostImages } from "../utils/filesHelper.js";
 import { ResponseError } from "../utils/responseError.js";
 export interface ProductPropsType {
+  id?:number;
   name: string;
   description: string;
   price: number;
@@ -14,6 +15,10 @@ export interface ProductPropsType {
   categoryName: string;
   tags: string[];
   images: string[];
+  user?:{
+    firstName:string;
+    lastName:string;
+  }
 }
 export const getProduct = async (id: number) => {
   return await prisma.product.findUnique({
@@ -22,6 +27,9 @@ export const getProduct = async (id: number) => {
     },
   });
 };
+export const getProductsList = async(option:any)=>{
+  return await prisma.product.findMany(option)
+}
 
 export const createProducts = async (productData: ProductPropsType) => {
   const data: any = {
@@ -234,4 +242,4 @@ export const getProductWithRelation = async (id: number) => {
         }
       : null,
   };
-};
+};
