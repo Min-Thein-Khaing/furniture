@@ -46,7 +46,6 @@ app.use("/uploads/optimize", express.static("uploads/optimize"));
 
 app.use(morgan("dev"));
 app.use(helmet());
-app.use(cors());
 app.use(
   compression({
     level: 3,

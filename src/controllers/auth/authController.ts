@@ -224,12 +224,14 @@ export const confirmPassword = async (
       secure: process.env.NODE_ENV === "production",
       sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
       maxAge: 15 * 60 * 1000, // 15 minutes
+      path: "/",
     })
     .cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+      path: "/",
     })
     .status(200)
     .json({
@@ -331,12 +333,14 @@ export const login = async (
       secure: process.env.NODE_ENV === "production",
       sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
       maxAge: 15 * 60 * 1000,
+      path: "/",
     })
     .cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
       maxAge: 30 * 24 * 60 * 60 * 1000,
+      path: "/",
     });
 
   return res.status(200).json({
@@ -584,15 +588,38 @@ export const resetPassword = async (
     secure: true,
     sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
     maxAge: 1000 * 60 * 15,
+    path: "/",
   });
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
     secure: true,
     sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
     maxAge: 1000 * 60 * 60 * 24 * 30,
+    path: "/",
   });
 
   return res.status(200).json({
     message: "Successfully reset your password.",
   });
 };
+interface CustomRequest extends Request {
+  userId?: number;
+  user?: any;
+}
+
+export const authCheck = async (req:CustomRequest,res:Response,next:NextFunction)=>{
+  try {
+    const user = await getNumberId(req.userId!);
+    if (!user) {
+      throw new ResponseError("User does not exist", 400, "user_not_found");
+    }
+    return res.status(200).json({
+      message: "User is authenticated",
+      userId : user.id,
+      userName : user.firstName + " " + user.lastName,
+      user
+    });
+  } catch (error) {
+    next(error)
+  }
+}
