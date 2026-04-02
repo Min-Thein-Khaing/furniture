@@ -89,9 +89,9 @@ export const registerController = async (
   return res.status(201).json({
     message: "User created successfully",
     data: {
-      phone: `We are sending to ${phone}`,
-      opt: opt,
+      phone: phone,
       rememberToken: token,
+      otp: opt,
     },
   });
 };
@@ -148,6 +148,7 @@ export const verifyOtpController = async (
     message: "User created successfully",
     data: {
       phone: result.phone,
+      otp: otp,
       verifyToken: result.verifyToken,
     },
   });
@@ -159,7 +160,7 @@ export const confirmPassword = async (
   next: NextFunction,
 ) => {
   if (validationFunction(req, res, next)) return;
-  const { firstName, lastName, phone, password, rememberToken } = req.body;
+  const { firstName,lastName, phone, password, rememberToken } = req.body;
   const user = await getNumberPhone(phone);
   checkUserExist(user);
   const otpRow = await getNumberPhoneOtp(phone);
@@ -238,6 +239,7 @@ export const confirmPassword = async (
       message: "User created successfully",
       data: {
         userId: newUser.id,
+        newUser
       },
     });
 };
