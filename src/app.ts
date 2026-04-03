@@ -41,6 +41,10 @@ const corsOptions: CorsOptions = {
   maxAge: 86400, // preflight OPTIONS request ကို ၂၄ နာရီ cache လုပ်ထား
   optionsSuccessStatus: 200, // legacy browsers (IE) အတွက်
 };
+app.use((req,res,next)=> {
+res.setHeader("Cross-Origin-Resource-Policy", "same-site");
+next()
+})
 app.use("/images", express.static("uploads/images"));
 app.use("/uploads/optimize", express.static("uploads/optimize"));
 

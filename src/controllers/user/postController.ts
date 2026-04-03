@@ -11,6 +11,7 @@ import { query } from "express-validator";
 import { validationFunction } from "../../utils/validationFunction.js";
 import { prisma } from "../../lib/prisma.js";
 import { getOrSetCache } from "../../utils/cache.js";
+import { prependListener } from "node:cluster";
 
 interface CustomerRequest extends Request {
   userId?: number;
@@ -96,6 +97,11 @@ export const getPostByPagination = async (
 
     const formattedData = posts.map((post: any) => ({
       ...post,
+      image: post.image
+        ? `http://localhost:${process.env.PORT || 8080}/uploads/optimize/${
+            post.image.split(".")[0]
+          }.webp`
+        : null,
       user: post.user
         ? {
             ...post.user,
@@ -228,7 +234,7 @@ export const getPostInfinitePagination = [
     .optional(),
 
   query("limit")
-    .isInt({ gt: 4 })
+    .isInt({ gt: 2 })
     .withMessage("Limit must be an integer")
     .optional(),
 
@@ -282,7 +288,7 @@ export const getPostInfinitePagination = [
     const formattedData = posts.map((post: any) => ({
       ...post,
       image: post.image
-        ? `http://localhost:${process.env.APP_URL}/uploads/optimize/${
+        ? `http://localhost:${process.env.PORT || 8080}/uploads/optimize/${
             post.image.split(".")[0]
           }.webp`
         : null,
@@ -301,6 +307,7 @@ export const getPostInfinitePagination = [
       data: formattedData,
       hasNextPage,
       nextCursor,
+      previousCursor: lastCursor || null,
     });
   },
 ];

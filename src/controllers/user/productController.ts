@@ -305,10 +305,9 @@ export const getProductsByPagination = async (
     return res.status(200).json({
       message: "Products fetched successfully",
       data: formattedProducts,
-      pagination: {
-        hasNextPage,
+      hasNextPage,
         nextCursor,
-      },
+        previousCursor: lastCursor || null,
     });
   } catch (error) {
     next(error);
