@@ -19,15 +19,7 @@ export const createPostValidator = [
     .notEmpty().withMessage("Body is required")
     .isLength({ min: 10 }).withMessage("Body must be at least 10 characters")
     .customSanitizer(value => sanitizeHtml(value)).notEmpty(),
-  body("categoryName")
-    .trim()
-    .notEmpty().withMessage("Category name is required")
-    .escape(),
-
-  body("typeName")
-    .trim()
-    .notEmpty().withMessage("Type name is required")
-    .escape(),
+  
 
   body("tags")
     .optional({ checkFalsy: true })
@@ -63,17 +55,7 @@ export const updatePostValidator = [
     .customSanitizer(value => sanitizeHtml(value)).notEmpty(),
 
 
-  body("categoryName")
-    .optional()
-    .trim()
-    .notEmpty().withMessage("Category name cannot be empty if provided")
-  ,
-
-  body("typeName")
-    .optional()
-    .trim()
-    .notEmpty().withMessage("Type name cannot be empty if provided")
-  ,
+  
 
   body("tags")
     .optional({ checkFalsy: true })

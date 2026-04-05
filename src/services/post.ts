@@ -9,8 +9,8 @@ export type PostPropsType = {
   body: string;
   image: string | null;
   authorId: number;
-  categoryName: string;
-  typeName: string;
+  // categoryName: string;
+  // typeName: string;
   tags: string[];
 };
 
@@ -25,26 +25,7 @@ export const createOnePost = async (postData: PostPropsType) => {
         id: postData.authorId,
       },
     },
-    category: {
-      connectOrCreate: {
-        where: {
-          name: postData.categoryName,
-        },
-        create: {
-          name: postData.categoryName,
-        },
-      },
-    },
-    type: {
-      connectOrCreate: {
-        where: {
-          name: postData.typeName,
-        },
-        create: {
-          name: postData.typeName,
-        },
-      },
-    },
+    
   };
   if (postData.tags && postData.tags.length > 0) {
     data.tags = {
@@ -58,7 +39,7 @@ export const createOnePost = async (postData: PostPropsType) => {
     user: true,
     tags: true,
     category: true,
-    type: true,
+      type: true,
   }});
 };
 
@@ -77,26 +58,7 @@ export const updateOnePost = async (id: number, postData: PostPropsType) => {
     content: postData.content ,
     body: postData.body ,
 
-    category: {
-      connectOrCreate: {
-        where: {
-          name: postData.categoryName ,
-        },
-        create: {
-          name: postData.categoryName ,  
-        },
-      },
-    },
-    type: {
-      connectOrCreate: {
-        where: {
-          name: postData.typeName ,
-        },
-        create: {
-          name: postData.typeName ,
-        },
-      },
-    },
+    
   };
   if (postData.image) {
     data.image = postData.image 

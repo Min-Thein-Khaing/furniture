@@ -43,7 +43,7 @@ export const createPost = async (
   }
 
   try {
-    const { title, content, body, categoryName, typeName, tags } = req.body;
+    const { title, content, body, tags } = req.body;
 
     // const userId = req.userId!;
     // const user = await getNumberId(userId);
@@ -71,8 +71,6 @@ export const createPost = async (
       body,
       image: image?.filename ?? "",
       authorId: user!.id,
-      categoryName,
-      typeName,
       tags: tags || [],
     };
 
@@ -149,8 +147,8 @@ export const updatePost = async (
       body: body || oldPost.body,
       image: finalImageName || oldPost.image,
       authorId: user!.id || oldPost.authorId,
-      categoryName: categoryName || oldPost.category?.name,
-      typeName: typeName || oldPost.type?.name,
+      // categoryName: categoryName || oldPost.category?.name,
+      // typeName: typeName || oldPost.type?.name,
       tags: tags || (oldPost.tags ? oldPost.tags.map((t: any) => t.name) : []),
     };
 

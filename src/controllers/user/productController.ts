@@ -1,5 +1,11 @@
 import { NextFunction, Response, Request } from "express";
-import { getProductsList, getProductWithRelation, ProductPropsType } from "../../services/product.js";
+import {
+  getCategoryList,
+  getProductsList,
+  getProductWithRelation,
+  getTypeList,
+  ProductPropsType,
+} from "../../services/product.js";
 import { ResponseError } from "../../utils/responseError.js";
 import { getOrSetCache } from "../../utils/cache.js";
 import { validationFunction } from "../../utils/validationFunction.js";
@@ -7,34 +13,37 @@ import { getNumberId } from "../../services/auth.js";
 import { checkUserNotExist } from "../../utils/userExist.js";
 
 interface CustomRequest extends Request {
-    userId?: number;
-    user?: any;
+  userId?: number;
+  user?: any;
 }
-export const getOneProduct = async (req: CustomRequest, res: Response, next: NextFunction) => {
-    try {
-        const productId = Number(req.params.id);
-        if (isNaN(productId)) {
-            throw new ResponseError("Invalid product ID", 400, "invalid_product_id");
-        }
-
-
-        const cacheKey = `products:${JSON.stringify(productId)}`;
-        const product = await getOrSetCache(cacheKey, async () => {
-            return await getProductWithRelation(productId);
-        });
-        if (!product) {
-            throw new ResponseError("Product not found", 404, "product_not_found");
-        }
-        return res.status(200).json({
-            message: "Product fetched successfully",
-            data: product,
-        });
-    } catch (error) {
-        next(error)
+export const getOneProduct = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const productId = Number(req.params.id);
+    if (isNaN(productId)) {
+      throw new ResponseError("Invalid product ID", 400, "invalid_product_id");
     }
-}
 
-//saya phone nyo idea 
+    const cacheKey = `products:${JSON.stringify(productId)}`;
+    const product = await getOrSetCache(cacheKey, async () => {
+      return await getProductWithRelation(productId);
+    });
+    if (!product) {
+      throw new ResponseError("Product not found", 404, "product_not_found");
+    }
+    return res.status(200).json({
+      message: "Product fetched successfully",
+      data: product,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+//saya phone nyo idea
 // export const getProductsByPagination = async (req: CustomRequest, res: Response, next: NextFunction) => {
 //     // ✅ validation
 //     if (validationFunction(req, res, next)) return;
@@ -144,12 +153,11 @@ export const getOneProduct = async (req: CustomRequest, res: Response, next: Nex
 //     });
 // }
 
-
 //chat gpt idea
 export const getProductsByPagination = async (
   req: CustomRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     // ✅ validation
@@ -160,9 +168,7 @@ export const getProductsByPagination = async (
     checkUserNotExist(user);
 
     // ✅ query params
-    const lastCursor = req.query.cursor
-      ? Number(req.query.cursor)
-      : undefined;
+    const lastCursor = req.query.cursor ? Number(req.query.cursor) : undefined;
 
     const limit = req.query.limit ? Number(req.query.limit) : 5;
 
@@ -216,8 +222,7 @@ export const getProductsByPagination = async (
     }
 
     // ✅ final where
-    const where =
-      andConditions.length > 0 ? { AND: andConditions } : {};
+    const where = andConditions.length > 0 ? { AND: andConditions } : {};
 
     // ✅ prisma option
     const option = {
@@ -243,6 +248,16 @@ export const getProductsByPagination = async (
           select: {
             firstName: true,
             lastName: true,
+          },
+        },
+        category: {
+          select: {
+            name: true,
+          },
+        },
+        type: {
+          select: {
+            name: true,
           },
         },
       },
@@ -300,14 +315,42 @@ export const getProductsByPagination = async (
             fullName: `${product.user.firstName} ${product.user.lastName}`,
           }
         : null,
+      category: product.category?.name || null,
+      type: product.type?.name || null,
     }));
 
     return res.status(200).json({
       message: "Products fetched successfully",
       data: formattedProducts,
+
       hasNextPage,
-        nextCursor,
-        previousCursor: lastCursor || null,
+      nextCursor,
+      previousCursor: lastCursor || null,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+//filter
+export const getProductsByCategoryType = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    if (validationFunction(req, res, next)) return;
+
+    const userId = req.userId!;
+    const user = await getNumberId(Number(userId));
+    checkUserNotExist(user);
+
+    const categories = await getCategoryList();
+    const types = await getTypeList();
+
+    return res.status(200).json({
+      message: "Categories and types fetched successfully",
+      categories: categories,
+      types: types,
     });
   } catch (error) {
     next(error);

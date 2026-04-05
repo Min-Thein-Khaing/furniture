@@ -271,6 +271,11 @@ export type TypeUncheckedUpdateManyInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
+export type TypeNullableScalarRelationFilter = {
+  is?: Prisma.TypeWhereInput | null
+  isNot?: Prisma.TypeWhereInput | null
+}
+
 export type TypeScalarRelationFilter = {
   is?: Prisma.TypeWhereInput
   isNot?: Prisma.TypeWhereInput
@@ -305,10 +310,12 @@ export type TypeCreateNestedOneWithoutPostsInput = {
   connect?: Prisma.TypeWhereUniqueInput
 }
 
-export type TypeUpdateOneRequiredWithoutPostsNestedInput = {
+export type TypeUpdateOneWithoutPostsNestedInput = {
   create?: Prisma.XOR<Prisma.TypeCreateWithoutPostsInput, Prisma.TypeUncheckedCreateWithoutPostsInput>
   connectOrCreate?: Prisma.TypeCreateOrConnectWithoutPostsInput
   upsert?: Prisma.TypeUpsertWithoutPostsInput
+  disconnect?: Prisma.TypeWhereInput | boolean
+  delete?: Prisma.TypeWhereInput | boolean
   connect?: Prisma.TypeWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.TypeUpdateToOneWithWhereWithoutPostsInput, Prisma.TypeUpdateWithoutPostsInput>, Prisma.TypeUncheckedUpdateWithoutPostsInput>
 }

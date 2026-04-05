@@ -111,9 +111,9 @@ export const updateProductValidator = [
     .isIn(["ACTIVE", "INACTIVE", "ARCHIVED"])
     .withMessage("Invalid status"),
 
-  body("typeName").optional().notEmpty().withMessage("Type Name is required"),
+  body("typeName").optional(),
 
-  body("categoryName").optional().notEmpty().withMessage("Category Name is required"),
+  body("categoryName").optional(),
   body("images")
     .optional({ checkFalsy: true })
     .isArray()

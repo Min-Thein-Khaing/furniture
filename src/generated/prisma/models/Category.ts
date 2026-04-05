@@ -294,6 +294,11 @@ export type CategorySumOrderByAggregateInput = {
   id?: Prisma.SortOrder
 }
 
+export type CategoryNullableScalarRelationFilter = {
+  is?: Prisma.CategoryWhereInput | null
+  isNot?: Prisma.CategoryWhereInput | null
+}
+
 export type CategoryScalarRelationFilter = {
   is?: Prisma.CategoryWhereInput
   isNot?: Prisma.CategoryWhereInput
@@ -317,10 +322,12 @@ export type CategoryCreateNestedOneWithoutPostsInput = {
   connect?: Prisma.CategoryWhereUniqueInput
 }
 
-export type CategoryUpdateOneRequiredWithoutPostsNestedInput = {
+export type CategoryUpdateOneWithoutPostsNestedInput = {
   create?: Prisma.XOR<Prisma.CategoryCreateWithoutPostsInput, Prisma.CategoryUncheckedCreateWithoutPostsInput>
   connectOrCreate?: Prisma.CategoryCreateOrConnectWithoutPostsInput
   upsert?: Prisma.CategoryUpsertWithoutPostsInput
+  disconnect?: Prisma.CategoryWhereInput | boolean
+  delete?: Prisma.CategoryWhereInput | boolean
   connect?: Prisma.CategoryWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.CategoryUpdateToOneWithWhereWithoutPostsInput, Prisma.CategoryUpdateWithoutPostsInput>, Prisma.CategoryUncheckedUpdateWithoutPostsInput>
 }
