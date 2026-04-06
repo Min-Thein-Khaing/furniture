@@ -231,6 +231,7 @@ export const getProductWithRelation = async (id: number) => {
       price: true,
       rating: true,
       inventory: true,
+      status: true, 
       images: {
         select: {
           path: true,
@@ -244,11 +245,13 @@ export const getProductWithRelation = async (id: number) => {
       },
       category: {
         select: {
+          id:true,
           name: true,
         },
       },
       type: {
         select: {
+          id:true,
           name: true,
         },
       },

@@ -238,6 +238,7 @@ export const getProductsByPagination = async (
         price: true,
         rating: true,
         inventory: true,
+        status:true,
         images: {
           select: {
             path: true,
@@ -348,9 +349,11 @@ export const getProductsByCategoryType = async (
     const types = await getTypeList();
 
     return res.status(200).json({
-      message: "Categories and types fetched successfully",
-      categories: categories,
-      types: types,
+      message: "Category and Type show successfully",
+      data: {
+        categories: categories,
+        types: types,
+      },
     });
   } catch (error) {
     next(error);
