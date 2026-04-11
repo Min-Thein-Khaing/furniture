@@ -11,7 +11,8 @@ import { proxy } from "../../../middlewares/proxy.js";
 import upload, { uploadMemory } from "../../../middlewares/uploadFile.js";
 import { getPostOne, getPostByPagination, getPostInfinitePagination } from "../../../controllers/user/postController.js";
 import { pagination } from "../../../validators/queryValidator.js";
-import { getOneProduct ,getProductsByCategoryType,getProductsByPagination } from "../../../controllers/user/productController.js";
+import { getOneProduct ,getProductsByCategoryType,getProductsByPagination ,toggleFavorite } from "../../../controllers/user/productController.js";
+import { filterProductValidator } from "../../../validators/productValidator.js";
 
 
 const router = express.Router();
@@ -24,6 +25,9 @@ router.get("/posts/infinite",proxy,getPostInfinitePagination)//infinite paginati
 
 router.get("/product/:id",proxy,getOneProduct)
 router.get("/products",proxy,getProductsByPagination) //cursor based pagination
+
+//whitelist or favorite list 
+router.patch("/products/toggle",proxy, filterProductValidator , toggleFavorite) //cursor based pagination
 
 router.patch("/profile/upload",proxy,upload.single('avatar'),uploadProfile)
 router.patch("/profile/upload/optimize",proxy,upload.single('avatar'),uploadProfileOptimize)

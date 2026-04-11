@@ -79,7 +79,7 @@ model Product {
   typeId      Int
   categoryId  Int
   authorId    Int
-  user        User             @relation(fields: [authorId], references: [id])
+  users       User[]
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
   images      Image[]

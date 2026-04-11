@@ -130,3 +130,14 @@ export const updateProductValidator = [
       return Array.isArray(value) ? value : [];
     }),
 ];
+
+
+export const filterProductValidator = [
+  body("productId")
+    .notEmpty().withMessage("Product ID is required") // ၁။ အလွတ်မဖြစ်ရဘူး (Not Empty)
+    .isInt().withMessage("Product ID must be an integer"), // ၂။ ကိန်းပြည့်ဖြစ်ရမယ်
+    
+  body("isFavorite")
+    .optional()
+    .isBoolean().withMessage("isFavorite must be a boolean value"),
+];

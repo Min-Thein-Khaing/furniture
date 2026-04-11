@@ -219,7 +219,7 @@ export const deleteProducts = async (id: number) => {
 };
 
 
-export const getProductWithRelation = async (id: number) => {
+export const getProductWithRelation = async (id: number,userId:number) => {
   const product = await prisma.product.findUnique({
     where: {
       id: id,
@@ -237,12 +237,16 @@ export const getProductWithRelation = async (id: number) => {
           path: true,
         },
       },
-      user: {
-        select: {
-          firstName: true,
-          lastName: true,
+      users: { 
+        where:{
+          id:userId
         },
-      },
+    select: {
+      id: true,
+      firstName: true,
+      lastName: true,
+    },
+  },
       category: {
         select: {
           id:true,
@@ -271,13 +275,32 @@ export const getProductWithRelation = async (id: number) => {
     images: product.images.map((img) => ({
       path: `http://localhost:${process.env.PORT}/uploads/optimize/${img.path.replace(/\.[^/.]+$/, "")}.webp`,
     })),
-    user: product.user
-      ? {
-          firstName: product.user.firstName,
-          lastName: product.user.lastName,
-          fullName: `${product.user.firstName} ${product.user.lastName}`,
-        }
-      : null,
-
+    users: product.users.map((u:any) => ({
+    firstName: u.firstName,
+    lastName: u.lastName,
+    fullName: `${u.firstName} ${u.lastName}`, // ဒီမှာ string interpolation နဲ့ ပေါင်းပေးလိုက်တာပါ
+  })),
   };
+};
+
+export const addProductToFavorite =async(userId:number,productId:number)=>{
+  return prisma.user.update({
+    where: { id: userId },
+    data: {
+      products :{
+        connect : {id:productId}
+      } 
+    },
+  });
+}
+
+export const removeProductFromFavorite = async (userId: number, productId: number) => {
+  return prisma.user.update({
+    where: { id: userId },
+    data: {
+      products: {
+        disconnect: { id: productId }
+      }
+    },
+  });
 };

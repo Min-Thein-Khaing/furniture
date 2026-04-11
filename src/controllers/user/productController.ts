@@ -1,16 +1,20 @@
 import { NextFunction, Response, Request } from "express";
 import {
+  addProductToFavorite,
   getCategoryList,
   getProductsList,
   getProductWithRelation,
   getTypeList,
   ProductPropsType,
+  removeProductFromFavorite,
 } from "../../services/product.js";
 import { ResponseError } from "../../utils/responseError.js";
 import { getOrSetCache } from "../../utils/cache.js";
 import { validationFunction } from "../../utils/validationFunction.js";
 import { getNumberId } from "../../services/auth.js";
 import { checkUserNotExist } from "../../utils/userExist.js";
+import { lengthInUtf8Bytes } from "bullmq";
+import { CacheQueue } from "../../jobs/queues/cacheQueue.js";
 
 interface CustomRequest extends Request {
   userId?: number;
@@ -22,6 +26,11 @@ export const getOneProduct = async (
   next: NextFunction,
 ) => {
   try {
+    if (validationFunction(req, res, next)) return;
+
+    const userId = req.userId!;
+    const user = await getNumberId(Number(userId));
+    checkUserNotExist(user);
     const productId = Number(req.params.id);
     if (isNaN(productId)) {
       throw new ResponseError("Invalid product ID", 400, "invalid_product_id");
@@ -29,7 +38,7 @@ export const getOneProduct = async (
 
     const cacheKey = `products:${JSON.stringify(productId)}`;
     const product = await getOrSetCache(cacheKey, async () => {
-      return await getProductWithRelation(productId);
+      return await getProductWithRelation(productId,userId);
     });
     if (!product) {
       throw new ResponseError("Product not found", 404, "product_not_found");
@@ -238,14 +247,15 @@ export const getProductsByPagination = async (
         price: true,
         rating: true,
         inventory: true,
-        status:true,
+        status: true,
+        discount: true,
         images: {
           select: {
             path: true,
           },
           take: 1,
         },
-        user: {
+        users: {
           select: {
             firstName: true,
             lastName: true,
@@ -309,13 +319,11 @@ export const getProductsByPagination = async (
           };
         })
         .filter(Boolean),
-      user: product.user
-        ? {
-            firstName: product.user.firstName,
-            lastName: product.user.lastName,
-            fullName: `${product.user.firstName} ${product.user.lastName}`,
-          }
-        : null,
+      users: product.users.map((u: any) => ({
+        firstName: u.firstName,
+        lastName: u.lastName,
+        fullName: `${u.firstName} ${u.lastName}`, // u ကို သုံးပြီး fullName တည်ဆောက်မယ်
+      })),
       category: product.category?.name || null,
       type: product.type?.name || null,
     }));
@@ -354,6 +362,46 @@ export const getProductsByCategoryType = async (
         categories: categories,
         types: types,
       },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const toggleFavorite = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    if (validationFunction(req, res, next)) return;
+
+    const userId = req.userId!;
+    const user = await getNumberId(Number(userId));
+    checkUserNotExist(user);
+    const { productId, isFavorite } = req.body;
+    let message = "";
+    let data;
+    if (isFavorite) {
+      data = await addProductToFavorite(userId, productId);
+      message = "Product added to favorite successfully";
+    } else {
+      data = await removeProductFromFavorite(userId, productId);
+      message = "Product removed from favorite successfully";
+    }
+    await CacheQueue.add(
+      "invalidate-product-cache",
+      {
+        pattern: `products:*`,
+      },
+      {
+        jobId: `invalidate-product-cache-${productId}-${Date.now()}`,
+        priority: 1,
+      },
+    );
+    return res.status(200).json({
+      message,
+      data
     });
   } catch (error) {
     next(error);
