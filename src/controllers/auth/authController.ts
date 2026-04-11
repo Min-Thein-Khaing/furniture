@@ -625,3 +625,24 @@ export const authCheck = async (req:CustomRequest,res:Response,next:NextFunction
     next(error)
   }
 }
+
+export const changePassword = async (req:CustomRequest,res:Response,next:NextFunction) => {
+  const user = await getNumberId(req.userId!);
+   if (!user) {
+      throw new ResponseError("User does not exist", 400, "user_not_found");
+    }
+    const {oldPassword , password } = req.body;
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isMatch) {
+      throw new ResponseError("Old password is incorrect", 400, "old_password_incorrect");
+    }
+    const salt = await bcrypt.genSalt(10);
+    const hashPassword = await bcrypt.hash(password, salt);
+    const userUpdateData = {
+      password: hashPassword,
+    };
+    await updateUser(userUpdateData, user.id);
+    return res.status(200).json({
+      message: "Successfully change your password.",
+    });
+}
